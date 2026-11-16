@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050811">
+  <meta name="description" content="A holographic Tic-Tac-Toe game controlled by hand gestures, against a bot or a friend.">
+  <title>HOLO-XO | Holographic Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/vision_bundle.mjs" type="module" defer></script>
+  <script src="/js/game.js" defer></script>
+  <script src="/js/bot.js" defer></script>
+  <script src="/js/strokes.js" defer></script>
+  <script src="/js/main.js" defer></script>
+</head>
+<body>
+  <div class="starfield" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Holo XO home"><span class="brand-icon">✳</span><span>HOLO<span class="brand-accent">-XO</span></span></a>
+    <div class="top-center"><span class="system-indicator"></span> HOLOGRAPHIC ARENA <span class="version">// 01.08</span></div>
+    <button class="sound-toggle" id="soundToggle" aria-pressed="false" title="Toggle sound"><span id="soundIcon">♫</span><span>SOUND</span></button>
+  </header>
+
+  <main id="top">
+    <section class="intro">
+      <div class="eyebrow"><span class="eyebrow-line"></span> TACTICAL INTERFACE <span class="eyebrow-line"></span></div>
+      <h1>THE <span>HOLOGRAPHIC</span><br>DUEL</h1>
+      <p>Trace your mark. Claim the grid. May the sharpest mind prevail.</p>
+    </section>
+
+    <section class="arena" aria-label="Holographic Tic-Tac-Toe arena">
+      <div class="arena-topline"><span><i class="live-dot"></i> ARENA LIVE</span><span id="roundLabel">MATCH 001 <span class="top-divider">|</span> ROUND 01</span><span>SECURE LINK <i class="signal-bars"><b></b><b></b><b></b></i></span></div>
+      <div class="arena-layout">
+        <aside class="player-card player-x" id="playerXCard"><div class="player-head"><span class="player-orb">X</span><span class="player-status" id="xStatus">YOUR TURN</span></div><div class="player-title" id="xName">PLAYER ONE</div><div class="player-sub" id="xSub">HUMAN · BLUE SQUADRON</div><div class="scoreline"><span>WINS</span><strong id="xScore">0</strong></div></aside>
+
+        <div class="board-wrap">
+          <div class="board-glow" aria-hidden="true"></div>
+          <div class="board" id="board" role="grid" aria-label="Tic-Tac-Toe board"></div>
+          <svg class="win-svg" id="winSvg" viewBox="0 0 300 300" aria-hidden="true"><line id="winLine" x1="0" y1="0" x2="0" y2="0" /></svg>
+          <div class="board-stamp">HOLO-XO <span>TACTICAL GRID · 3×3</span></div>
+        </div>
+
+        <aside class="player-card player-o" id="playerOCard"><div class="player-head"><span class="player-orb">O</span><span class="player-status" id="oStatus">STANDBY</span></div><div class="player-title" id="oName">ARENA DROID</div><div class="player-sub" id="oSub">AI OPPONENT · PROTOCOL 7</div><div class="scoreline"><span>WINS</span><strong id="oScore">0</strong></div></aside>
+      </div>
+      <div class="turn-banner" id="turnBanner" aria-live="polite"><span class="turn-pulse"></span><span id="turnText">INITIALIZING ARENA…</span></div>
+    </section>
+
+    <section class="control-deck">
+      <div class="deck-heading"><span class="eyebrow">COMMAND DECK</span><span class="deck-line"></span><span class="deck-index">SYS. CONTROL / 01</span></div>
+      <div class="deck-grid">
+        <article class="control-card mode-card"><div class="card-title"><span class="card-icon">◈</span><span>GAME MODE</span></div><div class="segmented" role="group" aria-label="Game mode"><button class="segment active" data-mode="bot">VS DROID</button><button class="segment" data-mode="friend">VS FRIEND</button></div><div class="difficulty-wrap" id="difficultyWrap"><label for="difficulty">DROID PROTOCOL</label><select id="difficulty"><option value="easy">01 · INITIATE</option><option value="medium" selected>02 · TACTICIAN</option><option value="hard">03 · GRANDMASTER</option></select></div><div class="card-foot" id="modeInfo">The droid plays as O.</div></article>
+        <article class="control-card gesture-card"><div class="card-title"><span class="card-icon">⌁</span><span>GESTURE LINK</span><span class="card-live" id="cameraStatus"><i></i> OFFLINE</span></div><div class="gesture-row"><div class="gesture-glyph" id="gestureGlyph">✋</div><div><div class="gesture-name" id="gestureName">LINK STANDBY</div><div class="gesture-help" id="gestureHelp">Enable camera to control the pen.</div></div></div><div class="gesture-actions"><button class="action-button" id="cameraBtn"><span>◉</span> ENABLE CAMERA</button><button class="action-button" id="mouseBtn"><span>⌖</span> USE MOUSE / TOUCH</button></div><div class="permission-note" id="permissionNote">Camera permission is requested only after you press Enable.</div></article>
+        <article class="control-card tool-card"><div class="card-title"><span class="card-icon">⌗</span><span>MARKER TOOLS</span></div><div class="tool-switch"><button class="tool-option active" data-tool="pen"><span>✎</span> PEN</button><button class="tool-option" data-tool="eraser"><span>⌫</span> ERASER</button></div><div class="marker-preview"><span class="marker-dot" id="markerDot"></span><span id="toolDescription">Pinch to trace · release to place</span></div><div class="tool-hint">ERASING CLEARS CELL INK — NOT THE GAME MOVE</div></article>
+        <article class="control-card match-card"><div class="card-title"><span class="card-icon">⟲</span><span>MATCH CONTROL</span></div><button class="restart-button" id="resetBtn"><span>↻</span> RESET BOARD</button><button class="new-match-button" id="newMatchBtn">NEW MATCH <span>↗</span></button><div class="match-status"><i class="live-dot"></i><span id="connectionText">SIMULATOR READY</span></div></article>
+      </div>
+    </section>
+
+    <section class="lower-grid">
+      <article class="panel guide-panel"><div class="panel-heading"><span class="panel-icon">⌁</span><div><div class="eyebrow">PILOT MANUAL</div><h2>GESTURE PROTOCOL</h2></div></div><div class="guide-steps"><div class="guide-step"><span class="step-num">01</span><div><b>ARM THE PEN</b><p>Center your hand in the camera. Aim at a cell and pinch thumb + index for about 0.6 seconds until the preview locks.</p></div><span class="step-glyph">🤏</span></div><div class="guide-step"><span class="step-num">02</span><div><b>DRAW YOUR MARK</b><p>Keep the pinch and trace a clear X or closed O in one cell. The whole stroke must stay within that cell.</p></div><span class="step-glyph">✎</span></div><div class="guide-step"><span class="step-num">03</span><div><b>RELEASE TO COMMIT</b><p>Open your fingers to stop. A valid mark is placed on release. One committed mark per turn.</p></div><span class="step-glyph">✋</span></div></div><div class="safety-note"><span>ⓘ</span> In friend mode, both players share the same local controls. Do not draw across cells.</div></article>
+      <article class="panel camera-panel"><div class="panel-heading"><span class="panel-icon">◉</span><div><div class="eyebrow">SENSOR ARRAY</div><h2>CAMERA FEED</h2></div><span class="camera-badge" id="feedBadge">STANDBY</span></div><div class="camera-window"><video id="cameraVideo" autoplay playsinline muted></video><canvas id="cameraCanvas"></canvas><div class="camera-placeholder" id="cameraPlaceholder"><div class="scan-ring"><span>◉</span></div><b>AWAITING SENSOR LINK</b><small>Camera preview remains on this device</small></div><div class="camera-overlay"><span id="fpsLabel">-- FPS</span><span id="handLabel">HAND: --</span></div></div><div class="camera-footer"><span id="cameraMessage">Camera is off. Mouse / touch works without it.</span><button class="camera-stop" id="stopCameraBtn" disabled>DISCONNECT</button></div><div class="tracking-meter"><span>TRACKING CONFIDENCE</span><div class="meter"><i id="confidenceBar"></i></div><b id="confidenceValue">--</b></div></article>
+      <article class="panel log-panel"><div class="panel-heading"><span class="panel-icon">▤</span><div><div class="eyebrow">COMBAT TELEMETRY</div><h2>ROUND LOG</h2></div><button class="clear-log" id="clearLogBtn" title="Clear log">⌫</button></div><div class="log-list" id="logList" aria-live="polite"><div class="log-empty">Awaiting first move…</div></div><div class="log-footer"><span>LOCAL SESSION ONLY</span><span id="logCount">0 EVENTS</span></div></article>
+    </section>
+
+    <footer><a class="brand footer-brand" href="#top"><span class="brand-icon">✳</span><span>HOLO<span class="brand-accent">-XO</span></span></a><span>TACTICAL INTERFACE · LOCAL PLAY · NO VIDEO UPLOAD</span><span>BUILT FOR THE ARENA <span class="footer-star">✦</span></span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

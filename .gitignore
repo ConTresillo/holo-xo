@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+mobile-check.png
+holo-xo-photo.png
+holo-xo-final.png
+bot-match.webm
